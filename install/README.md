@@ -14,11 +14,20 @@
     echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
     sudo apt-get update ; clear
-    sudo apt-get install -y kubelet kubeadm kubectl	
-	
+    sudo apt-get install -y kubelet kubeadm kubectl  # only on master
+    sudo apt-get install -y kubelet kubeadm          # only on nodes
+    
+    
+    check it installation sucessfull on master
+    docker -v
+    kubeadm version -o short
+    kubectl version --client --short
+    kubelet --version
+    
+    
 ### Step2: `On Master only:`
 
-    sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all
+    sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all   # Now run the step 3 on all nodes, Not on master
 	
     sudo mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -26,7 +35,7 @@
     
     ## Flannel 
     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml
-
+    OR
     ## Weave
     kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
     
